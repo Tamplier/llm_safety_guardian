@@ -1,6 +1,8 @@
 name: Deploy to Hugging Face Space
+
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   check-tests:
@@ -89,5 +91,5 @@ jobs:
             exit 0
           fi
           git add .
-          git commit -m "Deploy from GitHub Actions [$(date +'%Y-%m-%d %H:%M:%S')]"
+          git commit -m "Deploy from GitHub Actions ${{ github.event.release.tag_name }}"
           git push origin main
