@@ -54,7 +54,7 @@ text_vecrotization = text_vecrotization_pipeline()
 if not args.skip_preprocessing:
     preprocessing = preprocessing_pieline()
     X_train_transformed = preprocessing.fit_transform(X_train, y_train)
-    joblib.dump(preprocessing, PathHelper.models.base_text_preprocessor)
+    joblib.dump(preprocessing, PathHelper.models.light_text_preprocessor)
     fix_feature_names(X_train_transformed)
     X_train_transformed.to_csv(PathHelper.data.processed.x_train)
     y_train.to_csv(PathHelper.data.processed.y_train)

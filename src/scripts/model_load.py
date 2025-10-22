@@ -16,7 +16,7 @@ device = GPUManager.device()
 torch.load = lambda f, *args, **kwargs: original_torch_load(f, map_location=device, *args, **kwargs)
 
 label_encoder = joblib.load(PathHelper.models.label_encoder)
-preprocessor = joblib.load(PathHelper.models.base_text_preprocessor)
+preprocessor = joblib.load(PathHelper.models.light_text_preprocessor)
 vectorizer = text_vecrotization_pipeline()
 classifier = joblib.load(PathHelper.models.sbert_classifier, mmap_mode=None)
 

@@ -15,7 +15,7 @@ class PathHelper(PathConfig):
     project_root = PROJECT_ROOT
     class models(PathConfig):
         label_encoder = 'label_encoder.joblib'
-        base_text_preprocessor = 'base_text_preprocessor.joblib'
+        light_text_preprocessor = 'light_text_preprocessor.joblib'
         sbert_classifier = 'sbert_classifier.joblib'
     class data(PathConfig):
         class raw(PathConfig):

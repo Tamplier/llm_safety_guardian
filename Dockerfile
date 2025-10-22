@@ -37,7 +37,7 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH"
 
-RUN apt-get update && apt-get install -y libhunspell-dev hunspell-en-us && \
+RUN apt-get update && apt-get install -y libhunspell-dev hunspell-en-us libgomp1 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /nlp_suicide_watch
