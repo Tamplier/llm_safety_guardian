@@ -4,6 +4,7 @@ from .typos_processor import typos_processor
 from .gpu_manager import GPUManager
 from .path_helper import PathHelper
 from .logger_config import set_log_file
+from .fit_or_transform import fit_or_transform
 
 __all__ = ['CachingSpellChecker', 'PickleCompatible', 'set_log_file',
-           'typos_processor', 'GPUManager', 'PathHelper']
+           'typos_processor', 'GPUManager', 'PathHelper', 'fit_or_transform']

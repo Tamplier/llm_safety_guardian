@@ -3,7 +3,7 @@
 import joblib
 import torch
 from sklearn.preprocessing import LabelEncoder
-from src.util import PathHelper, GPUManager
+from src.util import PathHelper, GPUManager, fit_or_transform
 from src.pipelines import (
     preprocessing_pieline,
     text_vecrotization_pipeline,
@@ -17,12 +17,13 @@ torch.load = lambda f, *args, **kwargs: original_torch_load(f, map_location=devi
 
 label_encoder = joblib.load(PathHelper.models.label_encoder)
 preprocessor = joblib.load(PathHelper.models.base_text_preprocessor)
-vectorizer = joblib.load(PathHelper.models.vectorizer, mmap_mode=None)
+vectorizer = text_vecrotization_pipeline()
 classifier = joblib.load(PathHelper.models.sbert_classifier, mmap_mode=None)
 
 def predict(X):
     preprocessed = preprocessor.transform(X)
-    vectorized = vectorizer.transform(preprocessed)
+    # Fitting is not required by actual steps, but required by wrappers
+    vectorized = fit_or_transform(vectorizer, preprocessed)
     predicted = classifier.predict(vectorized)
     decoded = label_encoder.inverse_transform(predicted)
     return decoded

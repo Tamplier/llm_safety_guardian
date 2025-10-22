@@ -17,7 +17,6 @@ class PathHelper(PathConfig):
         label_encoder = 'label_encoder.joblib'
         base_text_preprocessor = 'base_text_preprocessor.joblib'
         sbert_classifier = 'sbert_classifier.joblib'
-        vectorizer = 'vectorizer.joblib'
     class data(PathConfig):
         class raw(PathConfig):
             data_set = 'Suicide_Detection.csv'

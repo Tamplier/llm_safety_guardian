@@ -77,7 +77,6 @@ else:
         y_test = y_test.loc[X_test_transformed.index]
 
 X_train_vectorized = text_vecrotization.fit_transform(X_train_transformed)
-joblib.dump(text_vecrotization, PathHelper.models.vectorizer)
 X_test_vectorized = text_vecrotization.transform(X_test_transformed)
 
 skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
