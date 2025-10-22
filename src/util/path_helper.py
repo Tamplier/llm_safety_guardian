@@ -16,6 +16,7 @@ class PathHelper(PathConfig):
     class models(PathConfig):
         label_encoder = 'label_encoder.joblib'
         light_text_preprocessor = 'light_text_preprocessor.joblib'
+        vectorizer = 'vectorizer.joblib'
         sbert_classifier = 'sbert_classifier.joblib'
     class data(PathConfig):
         class raw(PathConfig):

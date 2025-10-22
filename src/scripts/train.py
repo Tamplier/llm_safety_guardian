@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.metrics import accuracy_score
 from src.transformers import fix_feature_names
-from src.util import PathHelper, set_log_file
+from src.util import PathHelper, set_log_file, flush_all_handlers
 from src.pipelines import (
     preprocessing_pieline,
     text_vecrotization_pipeline,
@@ -77,6 +77,7 @@ else:
         y_test = y_test.loc[X_test_transformed.index]
 
 X_train_vectorized = text_vecrotization.fit_transform(X_train_transformed)
+joblib.dump(text_vecrotization, PathHelper.models.vectorizer)
 X_test_vectorized = text_vecrotization.transform(X_test_transformed)
 
 skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
@@ -134,3 +135,4 @@ joblib.dump(xgb, PathHelper.models.sbert_classifier)
 y_pred = xgb.predict(X_test_vectorized)
 
 logger.info('Final accuracy: %f', accuracy_score(y_test, y_pred))
+flush_all_handlers()

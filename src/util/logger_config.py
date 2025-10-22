@@ -1,11 +1,19 @@
 import logging
+import sys
 
-def set_log_file(filename):
+def set_log_file(log_file, level=logging.INFO):
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
+        level=level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(filename)
+            logging.FileHandler(log_file, mode='a', encoding="utf-8"),
+            logging.StreamHandler(sys.stdout)
         ]
     )
+
+def flush_all_handlers():
+    for handler in logging.root.handlers:
+        handler.flush()
