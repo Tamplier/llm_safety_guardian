@@ -71,7 +71,7 @@ to create a classifier based on vectors and extra features from previous step.
 Hyperparameter optimization was performed using Optuna and 3 fold cross validation.
 The final model achieved approximately 95% accuracy on validation data.
 
-![Loss plot](https://github.com/Tamplier/nlp_suicide_watch/tree/main/notebooks/nn_loss_plot.png)
+![Loss plot](https://raw.githubusercontent.com/Tamplier/nlp_suicide_watch/main/notebooks/nn_loss_plot.png)
 
 ## CI/CD
 A [Docker container was built](https://github.com/Tamplier/nlp_suicide_watch/blob/main/Dockerfile)
