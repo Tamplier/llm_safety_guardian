@@ -16,8 +16,8 @@ class PathHelper(PathConfig):
     class models(PathConfig):
         label_encoder = 'label_encoder.joblib'
         light_text_preprocessor = 'light_text_preprocessor.joblib'
-        vectorizer = 'vectorizer.joblib'
-        sbert_classifier = 'sbert_classifier.joblib'
+        sbert_classifier_weights = 'sbert_classifier_weights.pt'
+        sbert_classifier_params = 'sbert_classifier_params.json'
     class data(PathConfig):
         class raw(PathConfig):
             data_set = 'Suicide_Detection.csv'
@@ -26,5 +26,8 @@ class PathHelper(PathConfig):
             x_test = 'X_test_transformed.csv'
             y_train = 'y_train.csv'
             y_test = 'y_test.csv'
+    class notebooks(PathConfig):
+        loss_plot = 'nn_loss_plot.png'
     class logs(PathConfig):
         train = 'train.log'
+        loss_plot = 'loss_plot.log'

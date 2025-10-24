@@ -14,6 +14,6 @@ def set_log_file(log_file, level=logging.INFO):
         ]
     )
 
-def flush_all_handlers():
+def flush_all_loggers():
     for handler in logging.root.handlers:
         handler.flush()

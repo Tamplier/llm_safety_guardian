@@ -10,7 +10,6 @@ short_description: Text classifier that looking for signs of suicidal behavior.
 tags:
   - nlp
   - SBERT
-  - XGBoost
   - text-classification
   - psychology
   - suicide
@@ -65,12 +64,14 @@ After evaluating
 the most informative features were selected and integrated into the dataset.
 
 ## Training
-[Training was performed](https://www.kaggle.com/code/alexandrtinekov/upload-to-github-example) on a GPU in Kaggle.
-SBERT sentence transformer was used to vectorize preprocessed text and XGBoost to create a classifier
-based on vectors and extra features from previous step.
+[Training was performed](https://github.com/Tamplier/nlp_suicide_watch/tree/main/notebooks/kaggle-upload-to-github.ipynb)
+on a GPU in Kaggle. SBERT sentence transformer was used to vectorize preprocessed text and ANN (Torch)
+to create a classifier based on vectors and extra features from previous step.
 
 Hyperparameter optimization was performed using Optuna and 3 fold cross validation.
-The final model achieved approximately 95% accuracy on validation data
+The final model achieved approximately 95% accuracy on validation data.
+
+![Loss plot](https://github.com/Tamplier/nlp_suicide_watch/tree/main/notebooks/nn_loss_plot.png)
 
 ## CI/CD
 A [Docker container was built](https://github.com/Tamplier/nlp_suicide_watch/blob/main/Dockerfile)
@@ -89,7 +90,7 @@ ensuring only verified versions are released.
 ## Production
 The Docker image size is approximately 2.1 GB, and the average RAM usage under normal conditions is around 2.4 GB.
 Since this is an educational, non-commercial project, one of the key goals was to minimize hosting costs.
-However, due to the inclusion of large machine learning models and dependencies such as SciPy, Torch, and XGBoost,
+However, due to the inclusion of large machine learning models and dependencies such as SciPy and Torch,
 the memory requirements increased significantly.
 
 Given these constraints, finding a free or low-cost hosting option was challenging.
