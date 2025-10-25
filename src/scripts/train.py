@@ -56,8 +56,9 @@ if not args.skip_preprocessing:
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=42, stratify=y)
 
     preprocessing = preprocessing_pieline()
-    X_train_transformed = preprocessing.fit_transform(X_train, y_train)
+    X_train_transformed = preprocessing.fit(X_train, y_train)
     joblib.dump(preprocessing, PathHelper.models.light_text_preprocessor)
+    X_train_transformed = preprocessing.transform(X_train)
     fix_feature_names(X_train_transformed)
     X_train_transformed.to_csv(PathHelper.data.processed.x_train)
     y_train.to_csv(PathHelper.data.processed.y_train)

@@ -11,9 +11,6 @@ logger = logging.getLogger(__name__)
 class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManager):
     _nlp_model = None
 
-    def __init__(self):
-        self.nlp = self._get_nlp_model()
-
     @staticmethod
     @Language.component("newline_sentencizer")
     def newline_sentencizer(doc):
@@ -22,14 +19,14 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
                 doc[token.i].is_sent_start = True
         return doc
 
-    @classmethod
-    def _get_nlp_model(cls):
-        if cls._nlp_model is None:
-            cls._nlp_model = spacy.load('en_core_web_sm', disable=["ner", "textcat"])
-            cls._nlp_model.add_pipe('newline_sentencizer', before="parser")
+    @property
+    def nlp(self):
+        if self.__class__._nlp_model is None:
+            self.__class__._nlp_model = spacy.load('en_core_web_sm', disable=["ner", "textcat"])
+            self.__class__._nlp_model.add_pipe('newline_sentencizer', before="parser")
             for key in EMOTICONS_EMO:
-                cls._nlp_model.tokenizer.add_special_case(key, [{"ORTH": key}])
-        return cls._nlp_model
+                self.__class__._nlp_model.tokenizer.add_special_case(key, [{"ORTH": key}])
+        return self.__class__._nlp_model
 
     def fit(self, X, y=None):
         return self

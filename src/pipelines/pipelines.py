@@ -14,7 +14,6 @@ from src.neural_network import DeepClassifier
 from src.util import GPUManager
 
 def preprocessing_pieline(top_k_feat=15):
-    tokenizer = SpacyTokenizer()
     extractor = ExtraFeatures()
     extra_features_routine = Pipeline([
         ('selector', FeatureSelector(top_k_feat)),
@@ -27,7 +26,7 @@ def preprocessing_pieline(top_k_feat=15):
     col_transformer.set_output(transform='pandas')
     return Pipeline([
         ('splitter', FunctionTransformer(fix_concatenated_words, validate=False)),
-        ('tokenizer', FunctionTransformer(tokenizer.transform, validate=False)),
+        ('tokenizer', SpacyTokenizer()),
         ('features_extractor', FunctionTransformer(extractor.transform, validate=False)),
         ('column_transformer', col_transformer)
     ])
