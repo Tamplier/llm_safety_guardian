@@ -1,0 +1,23 @@
+2025-10-24 14:51:43,408 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-mpnet-base-v2
+2025-10-24 14:51:52,206 - src.transformers.sbert_vectorizer - INFO - Max seq length: 334
+2025-10-24 14:52:37,227 - src.transformers.spacy_tokenizer - INFO - Start spaCy preprocessing...
+2025-10-24 15:28:51,504 - src.transformers.spacy_tokenizer - INFO - SpaCy preprocessing finished
+2025-10-24 15:28:51,515 - src.transformers.features_extractor - INFO - Extra features extraction start
+2025-10-24 15:57:02,612 - src.transformers.features_extractor - INFO - Extra features finalized 0.250000 of total records
+2025-10-24 16:24:17,774 - src.transformers.features_extractor - INFO - Extra features finalized 0.500000 of total records
+2025-10-24 16:52:40,379 - src.transformers.features_extractor - INFO - Extra features finalized 0.750000 of total records
+2025-10-24 17:21:05,374 - src.transformers.features_extractor - INFO - Extra features extraction finish
+2025-10-24 17:22:34,677 - src.transformers.spacy_tokenizer - INFO - Start spaCy preprocessing...
+2025-10-24 17:37:12,337 - src.transformers.spacy_tokenizer - INFO - SpaCy preprocessing finished
+2025-10-24 17:37:12,343 - src.transformers.features_extractor - INFO - Extra features extraction start
+2025-10-24 17:49:10,657 - src.transformers.features_extractor - INFO - Extra features finalized 0.250000 of total records
+2025-10-24 18:01:21,376 - src.transformers.features_extractor - INFO - Extra features finalized 0.500000 of total records
+2025-10-24 18:13:19,439 - src.transformers.features_extractor - INFO - Extra features finalized 0.750000 of total records
+2025-10-24 18:24:59,734 - src.transformers.features_extractor - INFO - Extra features extraction finish
+2025-10-24 18:25:04,415 - src.transformers.sbert_vectorizer - INFO - Start SBERT transform
+2025-10-24 19:30:58,531 - src.transformers.sbert_vectorizer - INFO - Finish SBERT transform
+2025-10-24 19:30:59,498 - src.transformers.sbert_vectorizer - INFO - Start SBERT transform
+2025-10-24 20:00:18,121 - src.transformers.sbert_vectorizer - INFO - Finish SBERT transform
+2025-10-24 21:45:39,822 - __main__ - INFO - Best accuracy: 0.952379
+2025-10-24 21:45:39,822 - __main__ - INFO - Best params: {'residual': True, 'dim1': 576, 'dim2': 0.3375107609368016, 'dim3': 0.38306242071432833, 'dropout': 0.5, 'weight_decay': 3.148458606987403e-05, 'learning_rate': 0.0019394247634051812, 'batch_size': 256}
+2025-10-24 21:47:17,862 - __main__ - INFO - Final accuracy: 0.955403

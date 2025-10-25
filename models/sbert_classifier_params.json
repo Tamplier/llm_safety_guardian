@@ -1,0 +1,1 @@
+{"residual": true, "dim1": 576, "dim2": 0.3375107609368016, "dim3": 0.38306242071432833, "dropout": 0.5, "weight_decay": 3.148458606987403e-05, "learning_rate": 0.0019394247634051812, "batch_size": 256}
