@@ -88,7 +88,7 @@ ensuring only verified versions are released.
 ![Deploy](https://github.com/Tamplier/nlp_suicide_watch/actions/workflows/hugging_face_deploy.yml/badge.svg)
 
 ## Production
-The Docker image size is approximately 2.1 GB, and the average RAM usage under normal conditions is around 2.4 GB.
+The Docker image size is approximately 1.7 GB, and the average RAM usage under normal conditions is around 1.25 GB.
 Since this is an educational, non-commercial project, one of the key goals was to minimize hosting costs.
 However, due to the inclusion of large machine learning models and dependencies such as SciPy and Torch,
 the memory requirements increased significantly.
