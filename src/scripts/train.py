@@ -109,7 +109,7 @@ def objective(trial):
 best_params = None
 if args.optimization_trials > 0:
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=args.optimization_trials, timeout=60*60*5) # 6 hours
+    study.optimize(objective, n_trials=args.optimization_trials, timeout=60*60*5) # 5 hours
 
     logger.info('Best accuracy: %f', study.best_value)
     logger.info('Best params: %s', study.best_params)

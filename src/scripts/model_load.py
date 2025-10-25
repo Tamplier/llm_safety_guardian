@@ -1,9 +1,10 @@
 # pylint: disable=unused-import
 
-import os
 import json
 import joblib
 import torch
+import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from src.util import PathHelper, GPUManager, fit_or_transform
 from src.pipelines import (
@@ -32,10 +33,20 @@ classifier = classification_pipeline(classifier_params)
 classifier.initialize()
 classifier.load_params(f_params=PathHelper.models.sbert_classifier_weights)
 
-def predict(X):
+def predict_with_proba(X):
     preprocessed = preprocessor.transform(X)
     # Fitting is not required by actual steps, but required by wrappers
     vectorized = fit_or_transform(vectorizer, preprocessed)
-    predicted = classifier.predict(vectorized.astype('float32'))
-    decoded = label_encoder.inverse_transform(predicted)
-    return decoded
+    probs = classifier.predict_proba(vectorized.astype('float32'))
+    confidences = np.max(probs, axis=1)
+    pred_classes = np.argmax(probs, axis=1)
+    decoded = label_encoder.inverse_transform(pred_classes)
+
+    return pd.DataFrame({
+        'confidence': confidences,
+        'class': decoded
+    })
+
+def predict(X):
+    result = predict_with_proba(X)
+    return result['class']
