@@ -57,32 +57,16 @@ jobs:
           GIT_LFS_SKIP_SMUDGE=1 git clone https://user:$HF_TOKEN@huggingface.co/spaces/Tapocheck77/nlp_suicide_watch space
           cd space
           git lfs install || true
+          git lfs track "*.pt" || true
 
           cd ..
-          grep "filter=lfs" .gitattributes | awk '{print $1}' | while read pattern; do
-            find . -type f -name "$pattern"
-          done | sed 's|^\./||' | sort -u > /tmp/lfs_files.txt
-          while IFS= read -r file; do
-            if [ ! -f "$file" ] || [[ "$file" == *"data"* ]]; then
-              continue
-            fi
-            gh_oid=$(git show HEAD:"$file" | grep "oid sha256:" | cut -d':' -f2 | tr -d ' ')
-            if [ -f "space/$file" ]; then
-              hf_oid=$(cd space && git show HEAD:"$file" 2>/dev/null | grep "oid sha256:" | cut -d':' -f2 | tr -d ' ')
-            else
-              hf_oid=""
-            fi
-            if [ "$gh_oid" != "$hf_oid" ]; then
-              echo "Pulling LFS file: $file"
-              git lfs pull --include="$file"
-            fi
-          done < /tmp/lfs_files.txt
           rsync -av --delete \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='data' \
             --exclude='space' \
             --exclude='tmp' \
+            --exclude='.gitattributes' \
             ./ space/
 
           cd space
