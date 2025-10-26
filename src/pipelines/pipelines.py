@@ -14,7 +14,6 @@ from src.neural_network import DeepClassifier
 from src.util import GPUManager
 
 def preprocessing_pieline(top_k_feat=15):
-    extractor = ExtraFeatures()
     extra_features_routine = Pipeline([
         ('selector', FeatureSelector(top_k_feat)),
         ('scaler', StandardScaler().set_output(transform="pandas")),
@@ -27,14 +26,13 @@ def preprocessing_pieline(top_k_feat=15):
     return Pipeline([
         ('splitter', FunctionTransformer(fix_concatenated_words, validate=False)),
         ('tokenizer', SpacyTokenizer()),
-        ('features_extractor', FunctionTransformer(extractor.transform, validate=False)),
+        ('features_extractor', ExtraFeatures()),
         ('column_transformer', col_transformer)
     ])
 
 def text_vecrotization_pipeline():
-    sbert_vectorizer = SbertVectorizer()
     vectorizer = ColumnTransformer([
-        ('sbert_vectorize', FunctionTransformer(sbert_vectorizer.transform, validate=False), 'text')
+        ('sbert_vectorize', SbertVectorizer(), 'text')
     ], remainder='passthrough')
     return Pipeline([
         ('fix_column_names', FunctionTransformer(fix_feature_names, validate=False)),

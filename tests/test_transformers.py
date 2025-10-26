@@ -54,7 +54,7 @@ def test_feature_selector():
     result = selector.fit_transform(X, y)
     np.testing.assert_array_equal(np.sort(list(result.columns)), ['a', 'b'])
 
-vectorizer = SbertVectorizer('sentence-transformers/all-mpnet-base-v2')
+vectorizer = SbertVectorizer()
 
 @pytest.mark.parametrize(
     'text,chunks',

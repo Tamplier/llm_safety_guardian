@@ -5,15 +5,15 @@ from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sklearn.base import BaseEstimator, TransformerMixin
 from transformers import logging as hf_logging
-from src.util import GPUManager
+from src.util import GPUManager, PickleCompatible
 
 logger = logging.getLogger(__name__)
 
-class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager):
-    def __init__(self, model_name='sentence-transformers/all-mpnet-base-v2'):
-        self.model_name = model_name
-        self.model = SentenceTransformer(self.model_name, device=GPUManager.device())
-        self.tokenizer = self.model.tokenizer
+class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager, PickleCompatible):
+    _big_objects = ['model', 'tokenizer']
+    _model_name = 'sentence-transformers/all-mpnet-base-v2'
+
+    def __init__(self):
         self.chunk_token_size = self.model.max_seq_length - 50
         logger.info('Max seq length: %i', self.chunk_token_size)
         self.overlap = int(self.chunk_token_size * 0.2)
@@ -24,6 +24,14 @@ class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager):
             # Punctuation without spaces. Could be a sign of censorship
             separators=["\n\n", "\n", ",", " ", "!", ".", "?", "'"]
         )
+
+    @classmethod
+    def load_big_object(cls, name):
+        match name:
+            case 'model':
+                return SentenceTransformer(cls._model_name, device=GPUManager.device())
+            case 'tokenizer':
+                return cls.lazy_load('model').tokenizer
 
     def _token_length(self, text):
         return len(self.tokenizer.encode(text, add_special_tokens=True))
