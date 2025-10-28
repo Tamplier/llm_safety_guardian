@@ -29,6 +29,7 @@ class PathHelper(PathConfig):
             y_test = 'y_test.csv'
     class notebooks(PathConfig):
         loss_plot = 'nn_loss_plot.png'
+        feature_importance_plot = 'feature_importance_plot.png'
     class logs(PathConfig):
         train = 'train.log'
         loss_plot = 'loss_plot.log'

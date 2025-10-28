@@ -63,6 +63,13 @@ After evaluating
 [multiple approaches](https://github.com/Tamplier/nlp_suicide_watch/blob/main/src/transformers/feature_selector.py),
 the most informative features were selected and integrated into the dataset.
 
+As shown in the plot below, the two most important features for the classification task originate from the
+custom feature extractor:
+- Question mark rate
+- Compression — a metric indicating how much a text is reduced due to repeated characters (e.g., “!!!!” or “sooooo”)
+
+![Feature importance](https://raw.githubusercontent.com/Tamplier/nlp_suicide_watch/main/notebooks/feature_importance_plot.png)
+
 ## Training
 [Training was performed](https://github.com/Tamplier/nlp_suicide_watch/tree/main/notebooks/kaggle-upload-to-github.ipynb)
 on a GPU in Kaggle. SBERT sentence transformer was used to vectorize preprocessed text and ANN (Torch)
