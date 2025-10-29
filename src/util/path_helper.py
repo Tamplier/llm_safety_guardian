@@ -30,6 +30,7 @@ class PathHelper(PathConfig):
     class notebooks(PathConfig):
         loss_plot = 'nn_loss_plot.png'
         feature_importance_plot = 'feature_importance_plot.png'
+        roc_curve_plot = 'roc_curve_plot.png'
     class logs(PathConfig):
         train = 'train.log'
         loss_plot = 'loss_plot.log'

@@ -76,9 +76,25 @@ on a GPU in Kaggle. SBERT sentence transformer was used to vectorize preprocesse
 to create a classifier based on vectors and extra features from previous step.
 
 Hyperparameter optimization was performed using Optuna and 3 fold cross validation.
-The final model achieved approximately 95% accuracy on validation data.
+The final model achieved approximately 95% accuracy on the validation data.
+More detailed results (available in the
+[training log](https://github.com/Tamplier/nlp_suicide_watch/tree/main/logs/train.log)) are as follows:
+- Accuracy: 95.54% \[95.38%, 95.70%\]
+- Precision: 95.29% \[95.07%, 95.51%\] (about 95% of the records labeled as positive are actually positive)
+- Recall: 95.82% \[95.61%, 96.03%\] (about 95% of postitive records were found)
+The given 95% confidence intervals were obtained using bootstrap resampling with n = 10,000.
+
+Confusion matrix:
+|  | Predicted non-suicide | Predicted suicide |
+|--|--|--|
+| True non-suicide | 33,162 | 1,650 |
+| True suicide | 1,455 | 33,356 |
 
 ![Loss plot](https://raw.githubusercontent.com/Tamplier/nlp_suicide_watch/main/notebooks/nn_loss_plot.png)
+![ROC Curve](https://raw.githubusercontent.com/Tamplier/nlp_suicide_watch/main/notebooks/roc_curve.png)
+
+The ROC curve shows that the data are well separated.
+The true positive rate increases to about 80% with almost no increase in the false positive rate.
 
 ## CI/CD
 A [Docker container was built](https://github.com/Tamplier/nlp_suicide_watch/blob/main/Dockerfile)

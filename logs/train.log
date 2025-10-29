@@ -20,4 +20,4 @@
 2025-10-24 20:00:18,121 - src.transformers.sbert_vectorizer - INFO - Finish SBERT transform
 2025-10-24 21:45:39,822 - __main__ - INFO - Best accuracy: 0.952379
 2025-10-24 21:45:39,822 - __main__ - INFO - Best params: {'residual': True, 'dim1': 576, 'dim2': 0.3375107609368016, 'dim3': 0.38306242071432833, 'dropout': 0.5, 'weight_decay': 3.148458606987403e-05, 'learning_rate': 0.0019394247634051812, 'batch_size': 256}
-2025-10-24 21:47:17,862 - __main__ - INFO - Final accuracy: 0.955403
+2025-10-24 21:47:17,862 - __main__ - INFO - Final accuracy: 0.955403{'accuracy': {'median': 0.9553883055886704, 'interval': (0.9538370940637433, 0.9569538801832728)}, 'precision': {'median': 0.9528626257195045, 'interval': (0.9506563826970327, 0.9550897621955706)}, 'recall': {'median': 0.9582033781737387, 'interval': (0.9560718755840356, 0.9603139592133042)}, 'confusion': array([[33162, 1650], [ 1455, 33356]])}
