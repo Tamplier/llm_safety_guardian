@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.metrics import accuracy_score
 from src.transformers import fix_feature_names
-from src.util import PathHelper, set_log_file, flush_all_loggers
+from src.util import PathHelper, set_log_file, flush_all_loggers, bootstrap_metrics
 from src.pipelines import (
     preprocessing_pieline,
     text_vecrotization_pipeline,
@@ -138,5 +138,5 @@ classifier.save_params(f_params=PathHelper.models.sbert_classifier_weights)
 
 y_pred = classifier.predict(X_test_vectorized.astype('float32'))
 
-logger.info('Final accuracy: %f', accuracy_score(y_test, y_pred))
+logger.info('Final accuracy: %s', bootstrap_metrics(y_test, y_pred))
 flush_all_loggers()
