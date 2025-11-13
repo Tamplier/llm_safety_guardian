@@ -96,6 +96,14 @@ Confusion matrix:
 The ROC curve shows that the data are well separated.
 The true positive rate increases to about 80% with almost no increase in the false positive rate.
 
+![Accuracy vs message length](https://raw.githubusercontent.com/Tamplier/nlp_suicide_watch/main/notebooks/len_vs_acc.png)
+
+The last graph shows an intuitive relationship: the shorter the message, the less accurate the classification.
+The graph shows that with a message less than 5 characters long, classification is like we're flipping a coin,
+and acceptable accuracy is achieved only for messages longer than 15 characters.
+Of course, there are not many messages in the ranges up to 5 and up to 10 characters to speak about accuracy
+with sufficient confidence, however, the reduced classification quality is obvious.
+
 ## CI/CD
 A [Docker container was built](https://github.com/Tamplier/nlp_suicide_watch/blob/main/Dockerfile)
 containing all necessary dependencies, and it is used for all subsequent steps. For quality assurance,
