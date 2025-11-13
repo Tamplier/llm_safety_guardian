@@ -3,40 +3,42 @@ import torch
 from skorch import NeuralNetBinaryClassifier
 from skorch.dataset import ValidSplit
 from skorch.callbacks import EarlyStopping, EpochScoring, LRScheduler
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer, make_column_selector as selector
+from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from src.transformers import (
     fix_concatenated_words, SpacyTokenizer, ExtraFeatures,
-    FeatureSelector, SbertVectorizer, fix_feature_names
+    FeatureSelector, SbertVectorizer
 )
 from src.neural_network import DeepClassifier
 from src.util import GPUManager
 
-def preprocessing_pieline(top_k_feat=15):
-    extra_features_routine = Pipeline([
-        ('selector', FeatureSelector(top_k_feat)),
-        ('scaler', StandardScaler().set_output(transform="pandas")),
-    ])
-    col_transformer = ColumnTransformer([
-        ('extra_features_routine', extra_features_routine, selector(dtype_include='number'))
-    ], remainder='passthrough')
-    extra_features_routine.set_output(transform='pandas')
-    col_transformer.set_output(transform='pandas')
+def _select_numeric(df):
+    return df.select_dtypes(include='number')
+
+def _select_text(df):
+    return df['text']
+
+def preprocessing_pieline():
     return Pipeline([
         ('splitter', FunctionTransformer(fix_concatenated_words, validate=False)),
         ('tokenizer', SpacyTokenizer()),
         ('features_extractor', ExtraFeatures()),
-        ('column_transformer', col_transformer)
     ])
 
-def text_vecrotization_pipeline():
-    vectorizer = ColumnTransformer([
-        ('sbert_vectorize', SbertVectorizer(), 'text')
-    ], remainder='passthrough')
-    return Pipeline([
-        ('fix_column_names', FunctionTransformer(fix_feature_names, validate=False)),
-        ('vectorize', vectorizer)
+def feature_processing_pipeline(top_k_feat=15):
+    numeric_features = Pipeline([
+        ('select_numeric', FunctionTransformer(_select_numeric)),
+        ('selector', FeatureSelector(top_k_feat)),
+        ('scaler', StandardScaler())
+    ])
+    text_features = Pipeline([
+        ('select_text', FunctionTransformer(_select_text)),
+        ('sbert', SbertVectorizer())
+    ])
+
+    return FeatureUnion([
+        ('numeric', numeric_features),
+        ('text', text_features)
     ])
 
 def classification_pipeline(params):

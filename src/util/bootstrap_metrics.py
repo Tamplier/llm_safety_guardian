@@ -2,6 +2,8 @@ import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 
 def bootstrap_metrics(y_true, y_pred, n_resamples=10_000, confidence_level=0.95):
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
     n = len(y_true)
     metrics_boot = {'accuracy': [], 'precision': [], 'recall': []}
     for _ in range(n_resamples):

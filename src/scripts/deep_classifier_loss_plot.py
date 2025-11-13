@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from src.util import PathHelper, set_log_file
 from src.pipelines import (
     preprocessing_pieline,
-    text_vecrotization_pipeline,
+    feature_processing_pipeline,
     classification_pipeline
 )
 
@@ -20,7 +20,7 @@ X, y = df['text'], df['class']
 y = LabelEncoder().fit_transform(y)
 
 preprocessing = preprocessing_pieline()
-vecrotization = text_vecrotization_pipeline()
+f_processing = feature_processing_pipeline()
 classifier = classification_pipeline({
     'dim1': 512,
     'dim2': 0.5,
@@ -33,7 +33,7 @@ classifier = classification_pipeline({
 })
 
 X = preprocessing.fit_transform(X, y)
-X = vecrotization.fit_transform(X)
+X = f_processing.fit_transform(X)
 logger.debug('X_train size: %.0f MB', X.nbytes / 1024**2)
 gc.collect()
 

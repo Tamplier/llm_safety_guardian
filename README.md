@@ -101,8 +101,9 @@ The true positive rate increases to about 80% with almost no increase in the fal
 The last graph shows an intuitive relationship: the shorter the message, the less accurate the classification.
 The graph shows that with a message less than 5 characters long, classification is like we're flipping a coin,
 and acceptable accuracy is achieved only for messages longer than 15 characters.
-Of course, there are not many messages in the ranges up to 5 and up to 10 characters to speak about accuracy
-with sufficient confidence, however, the reduced classification quality is obvious.
+Of course, there are not many messages in the ranges up to 5 (there are only 8 messages in the test set)
+and up to 10 characters (13 messages only) to speak about accuracy with sufficient confidence, however,
+the reduced classification quality is obvious.
 
 ## CI/CD
 A [Docker container was built](https://github.com/Tamplier/nlp_suicide_watch/blob/main/Dockerfile)

@@ -7,12 +7,10 @@ import optuna
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.metrics import accuracy_score
-from src.transformers import fix_feature_names
 from src.util import PathHelper, set_log_file, flush_all_loggers, bootstrap_metrics
 from src.pipelines import (
     preprocessing_pieline,
-    text_vecrotization_pipeline,
+    feature_processing_pipeline,
     classification_pipeline
 )
 
@@ -40,7 +38,7 @@ args = parser.parse_args()
 
 TEST_SIZE = 0.3
 
-text_vecrotization = text_vecrotization_pipeline()
+f_processing = feature_processing_pipeline()
 
 if not args.skip_preprocessing:
     df = pd.read_csv(PathHelper.data.raw.data_set)
@@ -58,12 +56,10 @@ if not args.skip_preprocessing:
     preprocessing = preprocessing_pieline()
     X_train_transformed = preprocessing.fit_transform(X_train, y_train)
     joblib.dump(preprocessing, PathHelper.models.light_text_preprocessor)
-    fix_feature_names(X_train_transformed)
     X_train_transformed.to_csv(PathHelper.data.processed.x_train)
     y_train.to_csv(PathHelper.data.processed.y_train)
 
     X_test_transformed = preprocessing.transform(X_test)
-    fix_feature_names(X_test_transformed)
     X_test_transformed.to_csv(PathHelper.data.processed.x_test)
     y_test.to_csv(PathHelper.data.processed.y_test)
 else:
@@ -79,9 +75,9 @@ else:
         y_train = y_train.loc[X_train_transformed.index]
         y_test = y_test.loc[X_test_transformed.index]
 
-X_train_vectorized = text_vecrotization.fit_transform(X_train_transformed)
-joblib.dump(text_vecrotization, PathHelper.models.vectorizer)
-X_test_vectorized = text_vecrotization.transform(X_test_transformed)
+X_train_vectorized = f_processing.fit_transform(X_train_transformed, y_train)
+joblib.dump(f_processing, PathHelper.models.vectorizer)
+X_test_vectorized = f_processing.transform(X_test_transformed)
 
 skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 

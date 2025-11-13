@@ -1,15 +1,10 @@
-# pylint: disable=unused-import
-
 import json
 import joblib
 import torch
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from src.util import PathHelper, GPUManager, fit_or_transform
+from src.util import PathHelper, GPUManager
 from src.pipelines import (
-    preprocessing_pieline,
-    text_vecrotization_pipeline,
     classification_pipeline
 )
 
@@ -28,15 +23,14 @@ with open(PathHelper.models.sbert_classifier_params, 'r', encoding='utf-8') as f
 
 label_encoder = joblib.load(PathHelper.models.label_encoder)
 preprocessor = joblib.load(PathHelper.models.light_text_preprocessor)
-vectorizer = text_vecrotization_pipeline()
+vectorizer = joblib.load(PathHelper.models.vectorizer)
 classifier = classification_pipeline(classifier_params)
 classifier.initialize()
 classifier.load_params(f_params=PathHelper.models.sbert_classifier_weights)
 
 def predict_with_proba(X):
     preprocessed = preprocessor.transform(X)
-    # Fitting is not required by actual steps, but required by wrappers
-    vectorized = fit_or_transform(vectorizer, preprocessed)
+    vectorized = vectorizer.transform(preprocessed)
     probs = classifier.predict_proba(vectorized.astype('float32'))
     confidences = np.max(probs, axis=1)
     pred_classes = np.argmax(probs, axis=1)
