@@ -81,7 +81,7 @@ class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager, PickleCompati
                 chunk_embeddings = self.model.encode(
                     chunks,
                     device=GPUManager.device(),
-                    batch_size=512,
+                    batch_size=128,
                     convert_to_numpy=True,
                     show_progress_bar=False
                 )

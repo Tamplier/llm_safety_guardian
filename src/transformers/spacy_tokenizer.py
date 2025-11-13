@@ -34,6 +34,6 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
     def transform(self, X):
         logger.info('Start spaCy preprocessing...')
         with GPUManager.gpu_routine(spacy.require_gpu, spacy.require_cpu):
-            docs = list(self.nlp.pipe(X, batch_size=5000, n_process=1))
+            docs = list(self.nlp.pipe(X, batch_size=1000, n_process=1))
         logger.info('SpaCy preprocessing finished')
         return docs
