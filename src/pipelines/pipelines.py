@@ -3,7 +3,8 @@ import torch
 from skorch import NeuralNetBinaryClassifier
 from skorch.dataset import ValidSplit
 from skorch.callbacks import EarlyStopping, EpochScoring, LRScheduler
-from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer, make_column_selector as selector
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from src.transformers import (
     fix_concatenated_words, SpacyTokenizer, ExtraFeatures,
@@ -11,12 +12,6 @@ from src.transformers import (
 )
 from src.neural_network import DeepClassifier
 from src.util import GPUManager
-
-def _select_numeric(df):
-    return df.select_dtypes(include='number')
-
-def _select_text(df):
-    return df['text']
 
 def preprocessing_pieline():
     return Pipeline([
@@ -26,19 +21,20 @@ def preprocessing_pieline():
     ])
 
 def feature_processing_pipeline(top_k_feat=15):
-    numeric_features = Pipeline([
-        ('select_numeric', FunctionTransformer(_select_numeric)),
+    numeric_pipe = Pipeline([
         ('selector', FeatureSelector(top_k_feat)),
         ('scaler', StandardScaler())
     ])
-    text_features = Pipeline([
-        ('select_text', FunctionTransformer(_select_text)),
-        ('sbert', SbertVectorizer())
-    ])
 
-    return FeatureUnion([
-        ('numeric', numeric_features),
-        ('text', text_features)
+    return Pipeline([
+        ('numeric_processing', ColumnTransformer([
+            ('numeric', numeric_pipe, selector(dtype_include='number')),
+            ('text', 'passthrough', ['text'])
+        ], verbose_feature_names_out=False).set_output(transform='pandas')),
+
+        ('sbert_vectorize', ColumnTransformer([
+            ('sbert', SbertVectorizer(), 'text')
+        ], remainder='passthrough'))
     ])
 
 def classification_pipeline(params):

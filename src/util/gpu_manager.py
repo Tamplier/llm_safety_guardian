@@ -14,12 +14,10 @@ class GPUManager:
     @contextmanager
     def gpu_routine(cls, enter_gpu=None, exit_gpu=None):
         if torch.cuda.is_available():
-            if enter_gpu:
-                enter_gpu()
+            enter_gpu and enter_gpu()
             with torch.no_grad():
                 yield
-            if exit_gpu:
-                exit_gpu()
+            exit_gpu and exit_gpu()
             gc.collect()
             torch.cuda.empty_cache()
         else:

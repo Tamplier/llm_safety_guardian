@@ -1,5 +1,7 @@
+import gc
 import logging
 import re
+import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -71,7 +73,7 @@ class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager, PickleCompati
         X_encoded = []
         X = X if isinstance(X, list) else list(X)
         with GPUManager.gpu_routine(lambda: self.model.to(GPUManager.device()), self.model.cpu):
-            for x in X:
+            for idx, x in enumerate(X):
                 chunks = self._chunk_text_by_tokens(x)
                 if not chunks:
                     emb_dim = self.model.get_sentence_embedding_dimension()
@@ -81,11 +83,14 @@ class SbertVectorizer(BaseEstimator, TransformerMixin, GPUManager, PickleCompati
                 chunk_embeddings = self.model.encode(
                     chunks,
                     device=GPUManager.device(),
-                    batch_size=128,
+                    batch_size=32,
                     convert_to_numpy=True,
                     show_progress_bar=False
                 )
                 wegihted_embeddings = self._agg_embeddings(chunks, chunk_embeddings)
                 X_encoded.append(wegihted_embeddings)
+                if (idx + 1) % 500 == 0:
+                    torch.cuda.empty_cache()
+                    gc.collect()
         logger.info('Finish SBERT transform')
         return np.vstack(X_encoded)
