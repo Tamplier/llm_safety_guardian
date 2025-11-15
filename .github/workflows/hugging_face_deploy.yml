@@ -60,7 +60,7 @@ jobs:
           git lfs track "*.pt" || true
 
           cd ..
-          rsync -av --delete \
+          rsync -avc --delete \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='data' \
@@ -74,6 +74,6 @@ jobs:
             echo "No changes to deploy"
             exit 0
           fi
-          git add .
+          git add -A
           git commit -m "Deploy from GitHub Actions ${{ github.event.release.tag_name }}"
           git push origin main
