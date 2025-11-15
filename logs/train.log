@@ -21,3 +21,28 @@
 2025-10-24 21:45:39,822 - __main__ - INFO - Best accuracy: 0.952379
 2025-10-24 21:45:39,822 - __main__ - INFO - Best params: {'residual': True, 'dim1': 576, 'dim2': 0.3375107609368016, 'dim3': 0.38306242071432833, 'dropout': 0.5, 'weight_decay': 3.148458606987403e-05, 'learning_rate': 0.0019394247634051812, 'batch_size': 256}
 2025-10-24 21:47:17,862 - __main__ - INFO - Final accuracy: 0.955403{'accuracy': {'median': 0.9553883055886704, 'interval': (0.9538370940637433, 0.9569538801832728)}, 'precision': {'median': 0.9528626257195045, 'interval': (0.9506563826970327, 0.9550897621955706)}, 'recall': {'median': 0.9582033781737387, 'interval': (0.9560718755840356, 0.9603139592133042)}, 'confusion': array([[33162, 1650], [ 1455, 33356]])}
+2025-11-14 21:23:48,577 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-mpnet-base-v2
+2025-11-14 21:23:59,591 - src.transformers.sbert_vectorizer - INFO - Max seq length: 334
+2025-11-14 21:24:44,516 - src.transformers.spacy_tokenizer - INFO - Start spaCy preprocessing...
+2025-11-14 21:46:00,177 - src.transformers.spacy_tokenizer - INFO - SpaCy preprocessing finished
+2025-11-14 21:46:00,188 - src.transformers.features_extractor - INFO - Extra features extraction start
+2025-11-14 22:16:53,107 - src.transformers.features_extractor - INFO - Extra features finalized 0.250000 of total records
+2025-11-14 22:44:50,055 - src.transformers.features_extractor - INFO - Extra features finalized 0.500000 of total records
+2025-11-14 23:14:16,682 - src.transformers.features_extractor - INFO - Extra features finalized 0.750000 of total records
+2025-11-14 23:43:16,337 - src.transformers.features_extractor - INFO - Extra features extraction finish
+2025-11-14 23:43:36,203 - src.transformers.spacy_tokenizer - INFO - Start spaCy preprocessing...
+2025-11-14 23:51:52,620 - src.transformers.spacy_tokenizer - INFO - SpaCy preprocessing finished
+2025-11-14 23:51:52,626 - src.transformers.features_extractor - INFO - Extra features extraction start
+2025-11-15 00:04:15,121 - src.transformers.features_extractor - INFO - Extra features finalized 0.250000 of total records
+2025-11-15 00:16:30,027 - src.transformers.features_extractor - INFO - Extra features finalized 0.500000 of total records
+2025-11-15 00:28:28,074 - src.transformers.features_extractor - INFO - Extra features finalized 0.750000 of total records
+2025-11-15 00:40:09,830 - src.transformers.features_extractor - INFO - Extra features extraction finish
+2025-11-15 00:41:20,339 - src.transformers.sbert_vectorizer - INFO - Max seq length: 334
+2025-11-15 00:41:20,339 - src.transformers.sbert_vectorizer - INFO - Start SBERT transform
+2025-11-15 01:48:03,127 - src.transformers.sbert_vectorizer - INFO - Finish SBERT transform
+2025-11-15 01:48:04,846 - src.transformers.sbert_vectorizer - INFO - Start SBERT transform
+2025-11-15 02:16:54,160 - src.transformers.sbert_vectorizer - INFO - Finish SBERT transform
+2025-11-15 04:17:02,700 - __main__ - INFO - Best accuracy: 0.952435
+2025-11-15 04:17:02,701 - __main__ - INFO - Best params: {'residual': False, 'dim1': 512, 'dim2': 0.4615205356389198, 'dim3': 0.5260292183360776, 'dropout': 0.5, 'weight_decay': 1.4838834201141283e-05, 'learning_rate': 0.0008031403533624206, 'batch_size': 256}
+2025-11-15 04:24:57,076 - __main__ - INFO - Final accuracy: {'accuracy': {'median': 0.9562788159085359, 'interval': (0.9547559714462175, 0.9578013012941126)}, 'precision': {'median': 0.9524837104138937, 'interval': (0.9502738350466613, 0.9546917740291713)}, 'recall': {'median': 0.9604850935447506, 'interval': (0.9584203392472254, 0.962472426939053)}, 'confusion': array([[33144,  1668],
+       [ 1376, 33435]])}
