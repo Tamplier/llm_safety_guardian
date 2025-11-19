@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y python3-dev libhunspell-dev hunspell-en
     apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN python -m pip install --upgrade pip
 
-WORKDIR /nlp_suicide_watch
+WORKDIR /llm_safety_guardian
 
 COPY requirements.txt .
 
@@ -40,7 +40,7 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt-get update && apt-get install -y libhunspell-dev hunspell-en-us libgomp1 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /nlp_suicide_watch
+WORKDIR /llm_safety_guardian
 
 COPY --from=builder /opt/venv /opt/venv
 

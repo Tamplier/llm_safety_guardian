@@ -35,4 +35,4 @@ jobs:
         run: docker load -i test_container.tar
 
       - name: Run tests
-        run: docker run nlp_suicide_watch:test pytest
+        run: docker run llm_safety_guardian:test pytest

@@ -44,7 +44,7 @@ def test_typos_processor(text, expected):
     assert transformed == expected
 
 def test_path_helper():
-    assert 'nlp_suicide_watch' in str(PathHelper.project_root.resolve())
+    assert 'llm_safety_guardian' in str(PathHelper.project_root.resolve())
     assert 'models/' in str(PathHelper.models.label_encoder.resolve())
     assert 'data/processed/' in str(PathHelper.data.processed.x_train.resolve())
 

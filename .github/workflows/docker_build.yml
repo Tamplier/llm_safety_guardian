@@ -13,7 +13,7 @@ on:
         type: boolean
 
 env:
-  IMAGE_NAME: nlp_suicide_watch
+  IMAGE_NAME: llm_safety_guardian
   REGISTRY: ghcr.io/${{ github.repository }}
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: nlp_suicide_watch:${{ inputs.env }}
+          tags: llm_safety_guardian:${{ inputs.env }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
@@ -43,7 +43,7 @@ jobs:
             TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
 
       - name: Save image as artifact
-        run: docker save nlp_suicide_watch:${{ inputs.env }} -o ${{ inputs.env }}_container.tar
+        run: docker save llm_safety_guardian:${{ inputs.env }} -o ${{ inputs.env }}_container.tar
 
       - uses: actions/upload-artifact@v4
         with:

@@ -7,7 +7,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Hello! I'm a suicide watch bot 🤖")
+    bot.reply_to(message, "Hello! I'm a LLM safety guardian bot 🤖")
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):

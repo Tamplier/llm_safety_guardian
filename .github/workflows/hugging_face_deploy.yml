@@ -54,7 +54,7 @@ jobs:
 
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          GIT_LFS_SKIP_SMUDGE=1 git clone https://user:$HF_TOKEN@huggingface.co/spaces/Tapocheck77/nlp_suicide_watch space
+          GIT_LFS_SKIP_SMUDGE=1 git clone https://user:$HF_TOKEN@huggingface.co/spaces/Tapocheck77/llm_safety_guardian space
           cd space
           git lfs install || true
           git lfs track "*.pt" || true
