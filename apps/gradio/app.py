@@ -7,7 +7,7 @@ def predict(text):
 
 with gr.Blocks() as app:
     gr.Markdown("""
-    ### An attempt to identify suicidal mood in messages in natural English.
+    ### A text-risk detector designed as an external safeguard for LLMs.
     *The classification accuracy is usually higher for messages longer than 15 characters.*
     """)
 
