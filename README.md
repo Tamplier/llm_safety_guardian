@@ -18,9 +18,13 @@ tags:
 
 # llm_safety_guardian
 
-##
+## Motivation
 
-Modern AI assistants and LLM-based systems can unintentionally engage in high-risk conversations.
+LLMs are increasingly used in high-risk scenarios — including medical, legal, and
+psychological consultations — where model errors can have serious consequences.
+[Recent legal cases](https://www.bbc.com/news/articles/cgerwp7rdlvo) highlight
+the need for external monitoring mechanisms capable of identifying high-risk user inputs
+and mitigating potential harm for both users and developers.
 
 This project provides an independent safety layer that evaluates user–assistant dialogs and detects messages that may
 require the model to stop, redirect, or escalate the interaction according to safety guidelines.
