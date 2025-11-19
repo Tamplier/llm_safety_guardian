@@ -54,8 +54,9 @@ docker run -e TELEGRAM_TOKEN="YOUR_TOKEN_HERE" llm_safety_guardian invoke start-
 ## Basic information
 
 This project contains a machine learning model trained on a
-[dataset obtained from Kaggle](https://www.kaggle.com/datasets/nikhileswarkomati/suicide-watch).
-The dataset is balanced, which allowed us to use simple accuracy as the primary evaluation metric.
+[dataset](https://www.kaggle.com/datasets/nikhileswarkomati/suicide-watch)
+containing examples of crisis communication. The dataset is balanced, which allowed us
+to use simple accuracy as the primary evaluation metric.
 
 Before training,
 a preliminary [exploratory analysis was conducted](https://www.kaggle.com/code/alexandrtinekov/sbert-suicide-watch).
@@ -100,10 +101,10 @@ More detailed results (available in the
 The given 95% confidence intervals were obtained using bootstrap resampling with n = 10,000.
 
 Confusion matrix:
-|  | Predicted non-suicide | Predicted suicide |
+|  | Predicted Safe message | Predicted High-risk message |
 |--|--|--|
-| True non-suicide | 33,162 | 1,650 |
-| True suicide | 1,455 | 33,356 |
+| True Safe message | 33,162 | 1,650 |
+| True High-risk message | 1,455 | 33,356 |
 
 ![Loss plot](https://raw.githubusercontent.com/Tamplier/llm_safety_guardian/main/notebooks/nn_loss_plot.png)
 ![ROC Curve](https://raw.githubusercontent.com/Tamplier/llm_safety_guardian/main/notebooks/roc_curve.png)
