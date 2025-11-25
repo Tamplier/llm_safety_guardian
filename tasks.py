@@ -27,3 +27,7 @@ def gradio(c):
 @task
 def start_telegram_bot(c):
     c.run('python -m apps.telegram.bot')
+
+@task
+def collect_messages(c):
+    c.run('python -m src.scripts.scrap_reddit')
