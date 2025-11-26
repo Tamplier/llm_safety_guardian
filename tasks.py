@@ -1,6 +1,10 @@
 from invoke import task
 
 @task
+def relabel_manually(c, sample_n=1000):
+    c.run(f'python -m src.scripts.relabel_manually --sample_n={sample_n}', pty=True)
+
+@task
 def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_n=None):
     """Fix typos, generate extra features, vectorize text"""
 
@@ -25,7 +29,7 @@ def retrain_model(c, opt_trials=30):
 
 @task
 def cli(c):
-    c.run('python -m apps.cli.__main__')
+    c.run('python -m apps.cli.__main__', pty=True)
 
 @task
 def gradio(c):
