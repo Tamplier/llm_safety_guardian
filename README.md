@@ -38,6 +38,9 @@ companies comply with Responsible AI standards, and prevents situations that may
 git clone https://github.com/Tamplier/llm_safety_guardian.git
 cd llm_safety_guardian
 
+# prepare input (fix typos, generate extra features, vectorize text)
+invoke prepare-input
+
 # retrain models
 invoke retrain-model
 
