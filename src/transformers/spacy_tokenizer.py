@@ -33,13 +33,15 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
         return self
 
     def exit_gpu(self):
-        import cupy as cp
-
         spacy.require_cpu()
-        mempool = cp.get_default_memory_pool()
-        pinned_mempool = cp.get_default_pinned_memory_pool()
-        mempool.free_all_blocks()
-        pinned_mempool.free_all_blocks()
+        try:
+            import cupy as cp
+            mempool = cp.get_default_memory_pool()
+            pinned_mempool = cp.get_default_pinned_memory_pool()
+            mempool.free_all_blocks()
+            pinned_mempool.free_all_blocks()
+        except (ImportError, AttributeError):
+            pass
 
     def transform(self, X):
         logger.info('Start spaCy preprocessing...')
