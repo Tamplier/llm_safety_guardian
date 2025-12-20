@@ -1,5 +1,6 @@
 import logging
 import spacy
+import torch
 from sklearn.base import BaseEstimator, TransformerMixin
 from spacy.language import Language
 from emot.emo_unicode import EMOTICONS_EMO
@@ -31,9 +32,23 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
     def fit(self, X, y=None):
         return self
 
+    def exit_gpu(self):
+        import cupy as cp
+
+        spacy.require_cpu()
+        mempool = cp.get_default_memory_pool()
+        pinned_mempool = cp.get_default_pinned_memory_pool()
+        mempool.free_all_blocks()
+        pinned_mempool.free_all_blocks()
+
     def transform(self, X):
         logger.info('Start spaCy preprocessing...')
-        with GPUManager.gpu_routine(spacy.require_gpu, spacy.require_cpu):
-            docs = list(self.nlp.pipe(X, batch_size=1000, n_process=1))
+        docs = []
+        chunk_size = 10000
+        for i in range(0, len(X), chunk_size):
+            chunk = X[i:i+chunk_size]
+            with GPUManager.gpu_routine(spacy.require_gpu, self.exit_gpu):
+                chunk_docs = list(self.nlp.pipe(chunk, batch_size=1000, n_process=1))
+                docs.extend(chunk_docs)
         logger.info('SpaCy preprocessing finished')
         return docs
