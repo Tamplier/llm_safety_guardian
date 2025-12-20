@@ -5,7 +5,7 @@ def relabel_manually(c, sample_n=1000):
     c.run(f'python -m src.scripts.relabel_manually --sample_n={sample_n}', pty=True)
 
 @task
-def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_n=None):
+def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_n=None, disale_new_sources=False):
     """Fix typos, generate extra features, vectorize text"""
 
     cmd = [
@@ -15,6 +15,8 @@ def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_
         cmd.append('--skip_preprocessing')
     if skip_vectorization:
         cmd.append('--skip_vectorization')
+    if disale_new_sources:
+        cmd.append('--disale_new_sources')
     if sample_n:
         cmd.append(f'--sample_n={sample_n}')
     command_str = ' '.join(cmd)
@@ -22,10 +24,15 @@ def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_
     c.run(command_str, pty=True)
 
 @task
-def retrain_model(c, opt_trials=30):
+def retrain_model(c, opt_trials=30, skip_label_fix=False):
     """Retrain the model."""
+    cmd = ['python', '-m', 'src.scripts.train']
+    cmd.append(f'--optimization_trials={opt_trials}')
+    if skip_label_fix:
+        cmd.append('--skip_label_fix')
+    command_str = ' '.join(cmd)
 
-    c.run(f'python -m src.scripts.train --optimization_trials={opt_trials}', pty=True)
+    c.run(command_str, pty=True)
 
 @task
 def cli(c):

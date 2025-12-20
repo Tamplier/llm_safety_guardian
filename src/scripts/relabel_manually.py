@@ -53,6 +53,7 @@ while df_output.shape[0] < args.sample_n:
     current_df.loc[idx, 'class'] = mapper[answer]
     df_output.loc[len(df_output)] = current_df.loc[idx]
     current_df.drop(index=idx, inplace=True)
+    print(df_output['class'].value_counts())
 
 df_output.to_csv(output_file, index=False)
 answer = None

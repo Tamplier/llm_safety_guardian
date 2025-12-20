@@ -5,7 +5,6 @@ import joblib
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 from src.util import PathHelper, set_log_file
 from src.pipelines import (
     preprocessing_pieline,
@@ -24,6 +23,11 @@ parser.add_argument(
     help='Skip vectorization step and load previous results.'
 )
 parser.add_argument(
+    '--disale_new_sources',
+    action='store_true',
+    help='Use original dataset only.'
+)
+parser.add_argument(
     '--sample_n',
     type=int,
     default=None,
@@ -39,6 +43,7 @@ TEST_SIZE = 0.3
 f_processing = feature_processing_pipeline()
 if not args.skip_preprocessing:
     df = pd.read_csv(PathHelper.data.raw.data_set)
+    df_test = pd.read_csv(PathHelper.data.raw.get_path('test_set.csv'))
     ask = pd.read_csv(PathHelper.data.raw.get_path('AskReddit_comments.csv'))
     true_ask = pd.read_csv(PathHelper.data.raw.get_path('TrueAskReddit_comments.csv'))
     casual = pd.read_csv(PathHelper.data.raw.get_path('CasualConversation_comments.csv'))
@@ -49,26 +54,21 @@ if not args.skip_preprocessing:
     This can lead to false signals during the training process.
     That's why we need to add some more messages from neutral sources.
     """
-    teenagers_indexes = df['class'] == 'non-suicide'
-    drop_indices = df.loc[teenagers_indexes].sample(frac=0.66, random_state=42).index
-    df = df.drop(drop_indices)
-    df = pd.concat([df, ask, true_ask, casual], ignore_index=True)
+    if not args.disale_new_sources:
+        teenagers_indexes = df['class'] == 'non-suicide'
+        drop_indices = df.loc[teenagers_indexes].sample(frac=0.66, random_state=42).index
+        df = df.drop(drop_indices)
+        df = pd.concat([df, ask, true_ask, casual], ignore_index=True)
 
     if args.sample_n:
         df = df.sample(n=args.sample_n)
-    X, y = df['text'], df['class']
+    X_train, y_train = df['text'], df['class']
+    X_test, y_test = df['text'], df['class']
 
     le = LabelEncoder()
-    y_enc = le.fit_transform(y)
-    y = pd.Series(y_enc, index=y.index)
-    del y_enc
+    y_train = pd.Series(le.fit_transform(y_train), index=y_train.index)
+    y_test = pd.Series(le.transform(y_test), index=y_test.index)
     joblib.dump(le, PathHelper.models.label_encoder)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=TEST_SIZE,
-        random_state=42,
-        stratify=y
-    )
 
     preprocessing = preprocessing_pieline()
     X_train_transformed = preprocessing.fit_transform(X_train, y_train)
