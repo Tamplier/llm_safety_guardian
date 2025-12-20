@@ -33,7 +33,7 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
         return self
 
     def exit_gpu(self):
-        spacy.require_cpu()
+        # spacy.require_cpu()
         try:
             import cupy as cp
             mempool = cp.get_default_memory_pool()
