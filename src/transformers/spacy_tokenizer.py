@@ -35,11 +35,9 @@ class SpacyTokenizer(BaseEstimator, TransformerMixin, PickleCompatible, GPUManag
         logger.info('Start spaCy preprocessing...')
         docs = []
         chunk_size = 10_000
-        self.device_setup(spacy.require_gpu)
         for i in range(0, len(X), chunk_size):
             chunk = X[i:i+chunk_size]
-            with GPUManager.gpu_routine():
-                chunk_docs = list(self.nlp.pipe(chunk, batch_size=1000, n_process=1))
-                docs.extend(chunk_docs)
+            chunk_docs = list(self.nlp.pipe(chunk, batch_size=1000, n_process=1))
+            docs.extend(chunk_docs)
         logger.info('SpaCy preprocessing finished')
         return docs
