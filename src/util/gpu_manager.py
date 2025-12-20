@@ -11,6 +11,10 @@ class GPUManager:
             return 'cpu'
 
     @classmethod
+    def device_setup(cls, enter_gpu):
+        torch.cuda.is_available() and enter_gpu()
+
+    @classmethod
     @contextmanager
     def gpu_routine(cls, enter_gpu=None, exit_gpu=None):
         if torch.cuda.is_available():
@@ -20,5 +24,14 @@ class GPUManager:
             exit_gpu and exit_gpu()
             gc.collect()
             torch.cuda.empty_cache()
+
+            try:
+                import cupy as cp
+                mempool = cp.get_default_memory_pool()
+                pinned_mempool = cp.get_default_pinned_memory_pool()
+                mempool.free_all_blocks()
+                pinned_mempool.free_all_blocks()
+            except (ImportError, AttributeError):
+                pass
         else:
             yield
