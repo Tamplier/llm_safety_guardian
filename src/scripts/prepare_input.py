@@ -38,8 +38,6 @@ set_log_file(PathHelper.logs.get_path('prepare_input.log'))
 logger = logging.getLogger(__name__)
 args = parser.parse_args()
 
-TEST_SIZE = 0.3
-
 f_processing = feature_processing_pipeline()
 if not args.skip_preprocessing:
     df = pd.read_csv(PathHelper.data.raw.data_set)
@@ -63,7 +61,7 @@ if not args.skip_preprocessing:
     if args.sample_n:
         df = df.sample(n=args.sample_n)
     X_train, y_train = df['text'], df['class']
-    X_test, y_test = df['text'], df['class']
+    X_test, y_test = df_test['text'], df_test['class']
 
     le = LabelEncoder()
     y_train = pd.Series(le.fit_transform(y_train), index=y_train.index)
@@ -85,12 +83,8 @@ else:
     y_train = pd.read_csv(PathHelper.data.processed.y_train)['0']
     y_test = pd.read_csv(PathHelper.data.processed.y_test)['0']
     if args.sample_n:
-        train_n = math.ceil(args.sample_n * (1 - TEST_SIZE))
-        test_n = math.ceil(args.sample_n * TEST_SIZE)
-        X_train_transformed = X_train_transformed.sample(n=train_n)
-        X_test_transformed = X_test_transformed.sample(n=test_n)
+        X_train_transformed = X_train_transformed.sample(n=args.sample_n)
         y_train = y_train.loc[X_train_transformed.index]
-        y_test = y_test.loc[X_test_transformed.index]
 if not args.skip_vectorization:
     X_train_vectorized = f_processing.fit_transform(X_train_transformed, y_train)
     joblib.dump(f_processing, PathHelper.models.vectorizer)
