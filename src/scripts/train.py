@@ -85,10 +85,10 @@ if not args.skip_label_fix:
     pred_probs = cross_val_predict(classifier, X_train, y_train)
     issues_mask = find_label_issues(
         labels=y_train.values.astype(int),
-        pred_probs=pred_probs,
-        return_indices_ranked_by='self_confidence'
+        pred_probs=pred_probs
     )
     y_train.loc[issues_mask] = 1 - y_train.loc[issues_mask]
+    logger.info('Labels fixed: %d', issues_mask.sum())
 
 classifier.fit(X_train, y_train)
 

@@ -1,5 +1,4 @@
 import logging
-import math
 import argparse
 import joblib
 import pandas as pd
@@ -7,7 +6,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from src.util import PathHelper, set_log_file
 from src.pipelines import (
-    preprocessing_pieline,
+    preprocessing_pipeline,
     feature_processing_pipeline
 )
 
@@ -68,7 +67,7 @@ if not args.skip_preprocessing:
     y_test = pd.Series(le.transform(y_test), index=y_test.index)
     joblib.dump(le, PathHelper.models.label_encoder)
 
-    preprocessing = preprocessing_pieline()
+    preprocessing = preprocessing_pipeline()
     X_train_transformed = preprocessing.fit_transform(X_train, y_train)
     joblib.dump(preprocessing, PathHelper.models.light_text_preprocessor)
     X_train_transformed.to_csv(PathHelper.data.processed.x_train)

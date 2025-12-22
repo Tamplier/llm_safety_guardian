@@ -7,3 +7,4 @@ invoke
 symspellpy
 sentence_transformers>=5.1
 skorch
+cleanlab

@@ -7,14 +7,15 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector as selector
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from src.transformers import (
-    fix_concatenated_words, SpacyTokenizer, ExtraFeatures,
-    FeatureSelector, SbertVectorizer
+    fix_concatenated_words, decode_html_entities,
+    SpacyTokenizer, ExtraFeatures, FeatureSelector, SbertVectorizer
 )
 from src.neural_network import DeepClassifier
 from src.util import GPUManager
 
-def preprocessing_pieline():
+def preprocessing_pipeline():
     return Pipeline([
+        ('html_decoder', FunctionTransformer(decode_html_entities, validate=False)),
         ('splitter', FunctionTransformer(fix_concatenated_words, validate=False)),
         ('tokenizer', SpacyTokenizer()),
         ('features_extractor', ExtraFeatures()),
