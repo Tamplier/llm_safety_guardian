@@ -12,15 +12,16 @@ from src.scripts.reports import loss_plot, roc_plot, importance_plot
 
 parser = argparse.ArgumentParser(description='A script that retrains a model.')
 parser.add_argument(
-    '--skip_label_fix',
-    action='store_true',
-    help='Skip CleanLab fixing step.'
-)
-parser.add_argument(
     '--optimization_trials',
     type=int,
     default=30,
     help='Amount of trials for optuna to optimize classification parameters.'
+)
+parser.add_argument(
+    '--frac_noise',
+    type=float,
+    default=1.0,
+    help='Use to only remove the “top” frac_noise * num_label_issues'
 )
 
 set_log_file(PathHelper.logs.train)
@@ -81,13 +82,13 @@ with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f
     json.dump(best_params, f)
 
 classifier = classification_pipeline(best_params)
-if not args.skip_label_fix:
+if args.frac_noise > 0:
     pred_probs = cross_val_predict(classifier, X_train, y_train)
     issues_mask = find_label_issues(
         labels=y_train.values.astype(int),
         pred_probs=pred_probs,
         filter_by='prune_by_noise_rate',
-        frac_noise=0.4
+        frac_noise=args.frac_noise
     )
     X_train = X_train[~issues_mask]
     y_train = y_train[~issues_mask]
