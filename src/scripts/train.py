@@ -6,9 +6,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import f1_score
-from cleanlab.filter import find_label_issues
 from src.util import (
-    PathHelper, set_log_file, flush_all_loggers,
+    PathHelper, set_log_file, flush_all_loggers, remove_label_issues,
     bootstrap_metrics, cross_val_predict, find_threshold, filter_by_threshold
 )
 from src.pipelines import classification_pipeline
@@ -24,7 +23,7 @@ parser.add_argument(
 parser.add_argument(
     '--frac_noise',
     type=float,
-    default=1.0,
+    default=0.4,
     help='Use to only remove the “top” frac_noise * num_label_issues'
 )
 
@@ -87,16 +86,7 @@ with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f
 
 classifier = classification_pipeline(best_params)
 if args.frac_noise > 0:
-    pred_probs = cross_val_predict(classifier, X_train, y_train)
-    issues_mask = find_label_issues(
-        labels=y_train.values.astype(int),
-        pred_probs=pred_probs,
-        filter_by='prune_by_noise_rate',
-        frac_noise=args.frac_noise
-    )
-    X_train = X_train[~issues_mask]
-    y_train = y_train[~issues_mask]
-    logger.info('Label issues: %d', issues_mask.sum())
+    X_train, y_train = remove_label_issues(classifier, X_train, y_train, args.frac_noise)
 
 # There is a third class, the "high-risk zone."
 # It is not so easy to add it, because there is no source of "ambiguous messages",

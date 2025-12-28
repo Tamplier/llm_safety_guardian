@@ -24,7 +24,7 @@ def prepare_input(c, skip_preprocessing=False, skip_vectorization=False, sample_
     c.run(command_str, pty=True)
 
 @task
-def retrain_model(c, opt_trials=30, frac_noise=1.0):
+def retrain_model(c, opt_trials=30, frac_noise=0.4):
     """Retrain the model."""
     cmd = ['python', '-m', 'src.scripts.train']
     cmd.append(f'--optimization_trials={opt_trials}')
