@@ -9,6 +9,8 @@ def cross_val_predict(model, X, y, cv=5, random_state=42):
     skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=random_state)
     pred_probs = np.zeros((len(y), 2))
 
+    X = np.asarray(X)
+    y = np.asarray(y)
     for train_idx, val_idx in skf.split(X, y):
         model.fit(
             X[train_idx],
