@@ -5,8 +5,12 @@ import optuna
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.metrics import f1_score
 from cleanlab.filter import find_label_issues
-from src.util import PathHelper, set_log_file, flush_all_loggers, bootstrap_metrics, cross_val_predict
+from src.util import (
+    PathHelper, set_log_file, flush_all_loggers,
+    bootstrap_metrics, cross_val_predict, find_threshold, filter_by_threshold
+)
 from src.pipelines import classification_pipeline
 from src.scripts.reports import loss_plot, roc_plot, importance_plot
 
@@ -94,6 +98,15 @@ if args.frac_noise > 0:
     y_train = y_train[~issues_mask]
     logger.info('Label issues: %d', issues_mask.sum())
 
+# There is a third class, the "high-risk zone."
+# It is not so easy to add it, because there is no source of "ambiguous messages",
+# unlike thematic subreddits.
+# Therefore, the following is an attempt to distinguish them
+# based on the confidence of the classifier.
+
+pred_probs = cross_val_predict(classifier, X_train, y_train)
+ct, _ = find_threshold(y_train, pred_probs, f1_score)
+
 classifier.fit(X_train, y_train)
 
 classifier.save_params(f_params=PathHelper.models.sbert_classifier_weights)
@@ -106,5 +119,9 @@ logger.info('Final accuracy: %s', bootstrap_metrics(y_test, y_pred))
 loss_plot(classifier.history)
 roc_plot(y_test, y_prob)
 importance_plot(classifier)
+
+mask, coverage = filter_by_threshold(y_prob, ct)
+logger.info('Applying confidence threshold: %f with coverage: %f', ct, coverage)
+logger.info('High confidence accuracy: %s', bootstrap_metrics(y_test[mask], y_pred[mask]))
 
 flush_all_loggers()

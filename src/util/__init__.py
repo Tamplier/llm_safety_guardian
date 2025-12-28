@@ -6,6 +6,8 @@ from .path_helper import PathHelper
 from .logger_config import set_log_file, flush_all_loggers
 from .bootstrap_metrics import bootstrap_metrics
 from .cross_val_predict import cross_val_predict
+from .confidence_threshold import find_threshold, filter_by_threshold
 
 __all__ = ['CachingSpellChecker', 'PickleCompatible', 'set_log_file', 'flush_all_loggers',
-           'typos_processor', 'GPUManager', 'PathHelper', 'bootstrap_metrics', 'cross_val_predict']
+           'typos_processor', 'GPUManager', 'PathHelper', 'bootstrap_metrics',
+           'cross_val_predict', 'find_threshold', 'filter_by_threshold']
