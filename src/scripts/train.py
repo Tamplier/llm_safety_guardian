@@ -49,6 +49,7 @@ def objective(trial):
         'weight_decay': trial.suggest_float('weight_decay', 1e-5, 1e-3, log=True),
         'learning_rate': trial.suggest_float('learning_rate', 1e-4, 1e-2, log=True),
         'batch_size': trial.suggest_categorical('batch_size', [64, 128, 256, 512]),
+        'temperature': trial.suggest_float('temperature', 1.0, 5.0)
     }
     pipeline = classification_pipeline(params)
     scores = cross_val_score(
@@ -56,7 +57,7 @@ def objective(trial):
         X_train,
         y_train,
         cv=skf,
-        scoring='accuracy'
+        scoring='neg_log_loss'
     )
 
     return scores.mean()
@@ -79,13 +80,19 @@ else:
         'dropout': 0.3,
         'learning_rate': 1e-4,
         'weight_decay': 1e-2,
-        'batch_size': 32
+        'batch_size': 32,
+        'temperature': 1.0
     }
 
 with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f:
     json.dump(best_params, f)
 
 classifier = classification_pipeline(best_params)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+
+logger.info('Accuracy before cleaning: %s', bootstrap_metrics(y_test, y_pred))
+
 if args.frac_noise > 0:
     X_train, y_train = remove_label_issues(classifier, X_train, y_train, args.frac_noise)
 
@@ -105,7 +112,7 @@ classifier.save_params(f_params=PathHelper.models.sbert_classifier_weights)
 y_pred = classifier.predict(X_test)
 y_prob = classifier.predict_proba(X_test)
 
-logger.info('Final accuracy: %s', bootstrap_metrics(y_test, y_pred))
+logger.info('Accuracy after cleaning: %s', bootstrap_metrics(y_test, y_pred))
 
 loss_plot(classifier.history)
 roc_plot(y_test, y_prob)

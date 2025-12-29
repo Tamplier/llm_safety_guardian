@@ -48,6 +48,7 @@ def classification_pipeline(params):
         DeepClassifier,
         module__dims=dims,
         module__dropout=params['dropout'],
+        module__temperature = params['temperature'],
         optimizer__weight_decay=params['weight_decay'],
         max_epochs=100,
         lr=params['learning_rate'],
