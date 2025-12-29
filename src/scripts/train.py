@@ -7,9 +7,10 @@ import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import f1_score
 from src.util import (
-    PathHelper, set_log_file, flush_all_loggers, remove_label_issues,
+    PathHelper, set_log_file, flush_all_loggers,
     bootstrap_metrics, cross_val_predict, find_threshold, filter_by_threshold
 )
+from src.util.label_issues import remove_label_issues
 from src.pipelines import classification_pipeline
 from src.scripts.reports import loss_plot, roc_plot, importance_plot
 

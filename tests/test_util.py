@@ -2,9 +2,13 @@ from unittest.mock import patch
 import pytest
 import spacy
 import numpy as np
+from sklearn.metrics import f1_score
 from sentence_transformers import SentenceTransformer
 from src.transformers import SpacyTokenizer, SbertVectorizer
-from src.util import CachingSpellChecker, typos_processor, PathHelper
+from src.util import (
+  CachingSpellChecker, typos_processor, PathHelper,
+  find_threshold, filter_by_threshold
+)
 
 nlp = spacy.load('en_core_web_sm', disable=["ner", "textcat"])
 
@@ -47,6 +51,36 @@ def test_path_helper():
     assert 'llm_safety_guardian' in str(PathHelper.project_root.resolve())
     assert 'models/' in str(PathHelper.models.label_encoder.resolve())
     assert 'data/processed/' in str(PathHelper.data.processed.x_train.resolve())
+
+@pytest.mark.parametrize(
+    'y,prob,te,ce,mask_expected',
+    [
+        ([1,0,1,0],
+         [[0.05, 0.95],
+          [0.95, 0.05],
+          [0.4, 0.6],
+          [0.45, 0.55]],
+          0.6,
+          0.75,
+          [True, True, True, False]),
+        ([1,0,1,0],
+         [[0.05, 0.95],
+          [0.95, 0.05],
+          [0.4, 0.6],
+          [0.55, 0.45]],
+          0.5,
+          1,
+          [True, True, True, True])
+    ]
+)
+def test_confidence_threshold(y, prob, te, ce, mask_expected):
+    y = np.array(y)
+    prob = np.array(prob)
+    t, c = find_threshold(y, prob, f1_score)
+    assert t == te
+    assert c == ce
+    mask, _ = filter_by_threshold(prob, t)
+    np.testing.assert_array_equal(mask, mask_expected)
 
 def test_pickle_base(monkeypatch):
     counting_init(SentenceTransformer, monkeypatch)

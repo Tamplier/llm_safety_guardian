@@ -1,6 +1,6 @@
 import numpy as np
 
-thresholds = np.linspace(0.5, 1, 15)
+thresholds = np.linspace(0.5, 1, 11)
 
 def find_threshold(y, probs, score_function):
     p1 = probs[:, 1]
