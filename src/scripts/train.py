@@ -49,7 +49,7 @@ def objective(trial):
         'weight_decay': trial.suggest_float('weight_decay', 1e-5, 1e-3, log=True),
         'learning_rate': trial.suggest_float('learning_rate', 1e-4, 1e-2, log=True),
         'batch_size': trial.suggest_categorical('batch_size', [64, 128, 256, 512]),
-        'temperature': trial.suggest_float('temperature', 1.0, 5.0)
+        'temperature': trial.suggest_float('temperature', 1.0, 10.0)
     }
     pipeline = classification_pipeline(params)
     scores = cross_val_score(
