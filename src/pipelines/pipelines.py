@@ -10,7 +10,7 @@ from src.transformers import (
     fix_concatenated_words, decode_html_entities,
     SpacyTokenizer, ExtraFeatures, FeatureSelector, SbertVectorizer
 )
-from src.neural_network import DeepClassifier
+from src.neural_network import DeepClassifier, CalibratedClassifier
 from src.util import GPUManager
 
 def preprocessing_pipeline():
@@ -48,7 +48,6 @@ def classification_pipeline(params):
         DeepClassifier,
         module__dims=dims,
         module__dropout=params['dropout'],
-        module__temperature = params['temperature'],
         optimizer__weight_decay=params['weight_decay'],
         max_epochs=100,
         lr=params['learning_rate'],
@@ -67,3 +66,6 @@ def classification_pipeline(params):
         ],
         device=GPUManager.device(),
     )
+
+def calibration_pipeline(base_model, temperature):
+    return CalibratedClassifier(base_model, temperature)

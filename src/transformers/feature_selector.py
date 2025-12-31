@@ -1,13 +1,11 @@
 import warnings
 from collections.abc import Iterable
-import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import mutual_info_classif, SelectKBest, f_classif
 
 def correlation_selection(X, y, feature_names):
-    # combined_df = pd.concat([X, y], axis=1)
     combined_df = X.copy()
     combined_df['class'] = y
     corr_matrix = combined_df.corr(method='pearson')

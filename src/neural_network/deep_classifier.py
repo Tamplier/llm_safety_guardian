@@ -3,9 +3,8 @@ from torch import nn
 from .residual_block import ResidualBlock
 
 class DeepClassifier(nn.Module):
-    def __init__(self, dims=[783, 512, 512, 256, 128], outputs=1, dropout=0.3, temperature=1.0):
+    def __init__(self, dims=[783, 512, 512, 256, 128], outputs=1, dropout=0.3):
         super().__init__()
-        self.temperature = temperature
         self.layers = nn.ModuleList()
         layers_amount = len(dims)
         for i in range(layers_amount - 1):
@@ -34,5 +33,4 @@ class DeepClassifier(nn.Module):
     def forward(self, x):
         for layer in self.layers:
             x = layer(x)
-        x = self.output_layer(x)
-        return x / self.temperature
+        return self.output_layer(x)
