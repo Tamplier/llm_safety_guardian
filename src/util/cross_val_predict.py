@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.base import clone
 from sklearn.model_selection import StratifiedKFold
 
 def cross_val_predict(model, X, y, cv=5, random_state=42):
@@ -12,10 +13,11 @@ def cross_val_predict(model, X, y, cv=5, random_state=42):
     X = np.asarray(X)
     y = np.asarray(y)
     for train_idx, val_idx in skf.split(X, y):
-        model.fit(
+        model_clone = clone(model)
+        model_clone.fit(
             X[train_idx],
             y[train_idx]
         )
-        pred_probs[val_idx] = model.predict_proba(X[val_idx])
+        pred_probs[val_idx] = model_clone.predict_proba(X[val_idx])
 
     return pred_probs
