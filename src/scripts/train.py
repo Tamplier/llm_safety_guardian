@@ -4,6 +4,7 @@ import argparse
 import optuna
 import pandas as pd
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score, StratifiedKFold, train_test_split
 from sklearn.metrics import f1_score, log_loss
 from src.util import (
@@ -63,7 +64,7 @@ def objective_nn(trial):
         X_train,
         y_train,
         cv=skf,
-        scoring='accuracy'
+        scoring='f1'
     )
 
     return scores.mean()
@@ -96,11 +97,16 @@ y_pred = classifier.predict(X_test)
 logger.info('Accuracy before cleaning: %s', bootstrap_metrics(y_test, y_pred))
 
 def objective_t(trial):
-    t = trial.suggest_float('temperature', 1.0, 10.0)
+    t = trial.suggest_float('temperature', 0.5, 10.0)
     model = calibration_pipeline(classifier, t)
     y_proba = model.predict_proba(X_cal)
     return log_loss(y_cal, y_proba[:, 1])
 
+if args.frac_noise > 0:
+    lr = LogisticRegression(max_iter=10_000, class_weight='balanced')
+    X_train, y_train = remove_label_issues(lr, X_train, y_train, args.frac_noise)
+
+# New t optimization for clean data
 study_t = optuna.create_study(direction="minimize")
 study_t.optimize(objective_t, n_trials=50)
 
@@ -112,9 +118,6 @@ calibrated_classifier = calibration_pipeline(classifier, t)
 best_params['temperature'] = t
 with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f:
     json.dump(best_params, f)
-
-if args.frac_noise > 0:
-    X_train, y_train = remove_label_issues(calibrated_classifier, X_train, y_train, args.frac_noise)
 
 # There is a third class, the "high-risk zone."
 # It is not so easy to add it, because there is no source of "ambiguous messages",

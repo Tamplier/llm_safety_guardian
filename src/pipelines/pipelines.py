@@ -56,7 +56,7 @@ def classification_pipeline(params):
         train_split=ValidSplit(0.2, stratified=True),
         callbacks=[
             EarlyStopping(patience=15, monitor='valid_loss'),
-            EpochScoring(scoring='accuracy', name='valid_acc', on_train=False),
+            EpochScoring(scoring='f1', name='valid_acc', on_train=False),
             LRScheduler(
                 policy=torch.optim.lr_scheduler.ReduceLROnPlateau,
                 monitor='valid_loss',

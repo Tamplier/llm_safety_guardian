@@ -27,8 +27,9 @@ def remove_label_issues(
         total_removed += issues_mask.sum()
         issues_fraction = issues_mask.sum() / current_counter
         if total_removed > max_removed:
+            total_removed -= issues_mask.sum()
             break
         X = X[~issues_mask]
         y = y[~issues_mask]
-    logger.info('Label issues: %d', issues_mask.sum())
+    logger.info('Label issues: %d', total_removed)
     return X, y
