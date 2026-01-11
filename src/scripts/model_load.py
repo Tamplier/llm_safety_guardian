@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 from src.util import PathHelper, GPUManager
 from src.pipelines import (
-    classification_pipeline
+    classification_pipeline,
+    calibration_pipeline
 )
 
 # Hack to load model without GPU
@@ -28,13 +29,19 @@ classifier = classification_pipeline(classifier_params)
 classifier.initialize()
 classifier.load_params(f_params=PathHelper.models.sbert_classifier_weights)
 
+calibrated_classifier = calibration_pipeline(classifier, classifier_params['temperature'])
+confidence_threshold = classifier_params['confidence_threshold']
+
 def predict_with_proba(X):
     preprocessed = preprocessor.transform(X)
     vectorized = vectorizer.transform(preprocessed)
-    probs = classifier.predict_proba(vectorized.astype('float32'))
+    probs = calibrated_classifier.predict_proba(vectorized.astype('float32'))
     confidences = np.max(probs, axis=1)
     pred_classes = np.argmax(probs, axis=1)
-    decoded = label_encoder.inverse_transform(pred_classes)
+    decoded = label_encoder.inverse_transform(pred_classes).astype(object)
+
+    mask = confidences < confidence_threshold
+    decoded = np.where(mask, decoded + ' (low confidence)', decoded)
 
     return pd.DataFrame({
         'confidence': confidences,

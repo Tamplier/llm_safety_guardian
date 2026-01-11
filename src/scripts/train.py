@@ -54,7 +54,7 @@ def objective_nn(trial):
         'dim2': trial.suggest_float('dim2', 0.3, 0.6),
         'dim3': trial.suggest_float('dim3', 0.3, 0.6),
         'dropout': trial.suggest_float('dropout', 0.1, 0.5, step=0.1),
-        'weight_decay': trial.suggest_float('weight_decay', 1e-5, 1e-3, log=True),
+        'weight_decay': trial.suggest_float('weight_decay', 1e-4, 0.1, log=True),
         'learning_rate': trial.suggest_float('learning_rate', 1e-4, 1e-2, log=True),
         'batch_size': trial.suggest_categorical('batch_size', [64, 128, 256, 512]),
     }
@@ -64,7 +64,7 @@ def objective_nn(trial):
         X_train,
         y_train,
         cv=skf,
-        scoring='f1'
+        scoring='neg_log_loss'
     )
 
     return scores.mean()
@@ -115,10 +115,6 @@ logger.info('Best calibration params: %s', study_t.best_params)
 t = study_t.best_params['temperature']
 calibrated_classifier = calibration_pipeline(classifier, t)
 
-best_params['temperature'] = t
-with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f:
-    json.dump(best_params, f)
-
 # There is a third class, the "high-risk zone."
 # It is not so easy to add it, because there is no source of "ambiguous messages",
 # unlike thematic subreddits.
@@ -127,6 +123,11 @@ with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f
 
 pred_probs = cross_val_predict(calibrated_classifier, X_train, y_train)
 ct, _ = find_threshold(y_train, pred_probs, f1_score)
+
+best_params['temperature'] = t
+best_params['confidence_threshold'] = ct
+with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f:
+    json.dump(best_params, f)
 
 calibrated_classifier.fit(X_train, y_train)
 
@@ -144,5 +145,7 @@ importance_plot(calibrated_classifier.base_model)
 mask, coverage = filter_by_threshold(y_prob, ct)
 logger.info('Applying confidence threshold: %f with coverage: %f', ct, coverage)
 logger.info('High confidence accuracy: %s', bootstrap_metrics(y_test[mask], y_pred[mask]))
+
+logger.info('Low confidence accuracy: %s', bootstrap_metrics(y_test[~mask], y_pred[~mask]))
 
 flush_all_loggers()
