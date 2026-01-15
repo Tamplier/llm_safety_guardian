@@ -103,7 +103,12 @@ def objective_t(trial):
     return log_loss(y_cal, y_proba[:, 1])
 
 if args.frac_noise > 0:
-    lr = LogisticRegression(max_iter=10_000, class_weight='balanced')
+    lr = LogisticRegression(
+        max_iter=10_000,
+        class_weight='balanced',
+        C=0.01,
+        penalty='l2'
+    )
     X_train, y_train = remove_label_issues(lr, X_train, y_train, args.frac_noise)
 
 # New t optimization for clean data
