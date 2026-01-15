@@ -109,9 +109,12 @@ if args.frac_noise > 0:
         C=0.01,
         penalty='l2'
     )
-    X_train, y_train = remove_label_issues(lr, X_train, y_train, args.frac_noise)
+    X_train, y_train, weights = remove_label_issues(lr, X_train, y_train, args.frac_noise)
+    X_train = {'data': X_train, 'sample_weight': weights}
 
 # New t optimization for clean data
+classifier = classification_pipeline(best_params)
+classifier.fit(X_train, y_train)
 study_t = optuna.create_study(direction="minimize")
 study_t.optimize(objective_t, n_trials=50)
 
@@ -126,7 +129,10 @@ calibrated_classifier = calibration_pipeline(classifier, t)
 # Therefore, the following is an attempt to distinguish them
 # based on the confidence of the classifier.
 
-pred_probs = cross_val_predict(calibrated_classifier, X_train, y_train)
+pred_probs = cross_val_predict(
+    calibrated_classifier,
+    X_train['data'], y_train, sample_weight=X_train['sample_weight']
+)
 ct, _ = find_threshold(y_train, pred_probs, f1_score)
 
 best_params['temperature'] = t

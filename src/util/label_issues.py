@@ -3,6 +3,7 @@ import logging
 import numpy as np
 from cleanlab.count import compute_confident_joint
 from cleanlab.filter import find_label_issues
+from cleanlab.rank import get_label_quality_scores
 from src.util import cross_val_predict
 
 logger = logging.getLogger(__name__)
@@ -44,4 +45,11 @@ def remove_label_issues(
         X = X[~issues_mask]
         y = y[~issues_mask]
     logger.info('Label issues: %d', total_removed)
-    return X, y
+    weights = _get_weights(classifier, X, y)
+    return X, y, weights
+
+
+def _get_weights(classifier, X, y, alpha=1, w_min=0.2):
+    pred_probs = cross_val_predict(classifier, X, y)
+    scores = get_label_quality_scores(labels=y.astype(int), pred_probs=pred_probs)
+    return np.clip(scores ** alpha, w_min, 1.0).astype(np.float32)

@@ -30,7 +30,7 @@ class DeepClassifier(nn.Module):
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
 
-    def forward(self, x):
+    def forward(self, data, sample_weight=None):
         for layer in self.layers:
-            x = layer(x)
-        return self.output_layer(x)
+            data = layer(data)
+        return self.output_layer(data)

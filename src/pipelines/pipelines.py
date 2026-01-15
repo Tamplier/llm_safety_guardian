@@ -1,6 +1,5 @@
 import math
 import torch
-from skorch import NeuralNetBinaryClassifier
 from skorch.dataset import ValidSplit
 from skorch.callbacks import EarlyStopping, EpochScoring, LRScheduler
 from sklearn.pipeline import Pipeline
@@ -10,7 +9,11 @@ from src.transformers import (
     fix_concatenated_words, decode_html_entities,
     SpacyTokenizer, ExtraFeatures, FeatureSelector, SbertVectorizer
 )
-from src.neural_network import DeepClassifier, CalibratedClassifier
+from src.neural_network import (
+    DeepClassifier,
+    CalibratedClassifier,
+    WeightedNeuralNetBinaryClassifier
+)
 from src.util import GPUManager
 
 def preprocessing_pipeline():
@@ -44,7 +47,7 @@ def classification_pipeline(params):
     dim3 = math.ceil(dim2 * params['dim3'])
     dims = [783, *first_layers, dim2, dim3]
 
-    return NeuralNetBinaryClassifier(
+    return WeightedNeuralNetBinaryClassifier(
         DeepClassifier,
         module__dims=dims,
         module__dropout=params['dropout'],

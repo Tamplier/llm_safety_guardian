@@ -1,0 +1,15 @@
+import skorch
+from skorch import NeuralNetBinaryClassifier
+
+class WeightedNeuralNetBinaryClassifier(NeuralNetBinaryClassifier):
+    def __init__(self, *args, criterion__reduce=False, **kwargs):
+        super().__init__(*args, criterion__reduce=criterion__reduce, **kwargs)
+
+    def get_loss(self, y_pred, y_true, X, *args, **kwargs):
+        loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
+        if not isinstance(X, dict) or 'sample_weight' not in X or X['sample_weight'] is None:
+            return loss_unreduced.mean()
+
+        sample_weight = skorch.utils.to_tensor(X['sample_weight'], device=self.device)
+        loss_reduced = (sample_weight * loss_unreduced).mean()
+        return loss_reduced
