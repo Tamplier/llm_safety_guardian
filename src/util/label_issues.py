@@ -1,10 +1,11 @@
 import math
 import logging
 import numpy as np
+import matplotlib.pyplot as plt
 from cleanlab.count import compute_confident_joint
 from cleanlab.filter import find_label_issues
 from cleanlab.rank import get_label_quality_scores
-from src.util import cross_val_predict
+from src.util import cross_val_predict, PathHelper
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,15 @@ def remove_label_issues(
     return X, y, weights
 
 
-def _get_weights(classifier, X, y, alpha=1, w_min=0.2):
+def _get_weights(classifier, X, y, alpha=1, w_min=0.1):
     pred_probs = cross_val_predict(classifier, X, y)
     scores = get_label_quality_scores(labels=y.astype(int), pred_probs=pred_probs)
-    return np.clip(scores ** alpha, w_min, 1.0).astype(np.float32)
+    mean_score_per_class = np.zeros_like(scores)
+    for c in np.unique(y):
+        mean_score_per_class[y == c] = scores[y == c].mean()
+    scores = scores / mean_score_per_class
+    scores = np.clip(scores ** alpha, a_min=w_min, a_max=None).astype(np.float32)
+    plt.hist(scores)
+    plt.xlabel('Label score')
+    plt.savefig(PathHelper.notebooks.get_path('labels_score.png'))
+    return scores
