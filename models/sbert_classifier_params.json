@@ -1,1 +1,1 @@
-{"residual": false, "dim1": 512, "dim2": 0.4615205356389198, "dim3": 0.5260292183360776, "dropout": 0.5, "weight_decay": 1.4838834201141283e-05, "learning_rate": 0.0008031403533624206, "batch_size": 256}
+{"residual": false, "dim1": 320, "dim2": 0.5091606773717285, "dim3": 0.37017625068814686, "dropout": 0.30000000000000004, "weight_decay": 0.0051128217229257904, "learning_rate": 0.00010736420629235227, "batch_size": 512, "a_cal": -0.5701909722101184, "b_cal": 0.037140566056869044, "confidence_threshold": 0.95}
