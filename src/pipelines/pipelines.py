@@ -70,5 +70,5 @@ def classification_pipeline(params):
         device=GPUManager.device(),
     )
 
-def calibration_pipeline(base_model, temperature):
-    return CalibratedClassifier(base_model, temperature)
+def calibration_pipeline(base_model, a, b):
+    return CalibratedClassifier(base_model, a, b)

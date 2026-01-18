@@ -29,7 +29,9 @@ classifier = classification_pipeline(classifier_params)
 classifier.initialize()
 classifier.load_params(f_params=PathHelper.models.sbert_classifier_weights)
 
-calibrated_classifier = calibration_pipeline(classifier, classifier_params['temperature'])
+a = classifier_params['a_cal']
+b = classifier_params['b_cal']
+calibrated_classifier = calibration_pipeline(classifier, a, b)
 confidence_threshold = classifier_params['confidence_threshold']
 
 def predict_with_proba(X):

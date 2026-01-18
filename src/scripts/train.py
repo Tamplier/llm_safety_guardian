@@ -6,7 +6,8 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score, StratifiedKFold, train_test_split
-from sklearn.metrics import f1_score, log_loss
+from sklearn.metrics import f1_score
+from sklearn.calibration import CalibratedClassifierCV
 from src.util import (
     PathHelper, set_log_file, flush_all_loggers,
     bootstrap_metrics, cross_val_predict, find_threshold, filter_by_threshold
@@ -96,12 +97,6 @@ y_pred = classifier.predict(X_test)
 
 logger.info('Accuracy before cleaning: %s', bootstrap_metrics(y_test, y_pred))
 
-def objective_t(trial):
-    t = trial.suggest_float('temperature', 0.5, 10.0)
-    model = calibration_pipeline(classifier, t)
-    y_proba = model.predict_proba(X_cal)
-    return log_loss(y_cal, y_proba[:, 1])
-
 if args.frac_noise > 0:
     lr = LogisticRegression(
         max_iter=10_000,
@@ -109,19 +104,22 @@ if args.frac_noise > 0:
         C=0.01,
         penalty='l2'
     )
-    X_train, y_train, weights = remove_label_issues(lr, X_train, y_train, args.frac_noise)
+    calibrated_model = CalibratedClassifierCV(lr, method='sigmoid', cv=3)
+    X_train, y_train, weights = remove_label_issues(calibrated_model, X_train, y_train, args.frac_noise)
     X_train = {'data': X_train, 'sample_weight': weights}
 
 # New t optimization for clean data
 classifier = classification_pipeline(best_params)
 classifier.fit(X_train, y_train)
-study_t = optuna.create_study(direction="minimize")
-study_t.optimize(objective_t, n_trials=50)
+calibrated_model = CalibratedClassifierCV(classifier, method='sigmoid', cv='prefit')
+calibrated_model.fit(X_cal, y_cal)
+calibrator = calibrated_model.calibrated_classifiers_[0].calibrators[0]
+a = calibrator.a_
+b = calibrator.b_
 
-logger.info('Best calibration params: %s', study_t.best_params)
+logger.info('Best calibration params: %s, %s', a, b)
 
-t = study_t.best_params['temperature']
-calibrated_classifier = calibration_pipeline(classifier, t)
+calibrated_classifier = calibration_pipeline(classifier, a, b)
 
 # There is a third class, the "high-risk zone."
 # It is not so easy to add it, because there is no source of "ambiguous messages",
@@ -135,7 +133,8 @@ pred_probs = cross_val_predict(
 )
 ct, _ = find_threshold(y_train, pred_probs, f1_score)
 
-best_params['temperature'] = t
+best_params['a_cal'] = a
+best_params['b_cal'] = b
 best_params['confidence_threshold'] = ct
 with open(PathHelper.models.sbert_classifier_params, 'w', encoding='utf-8') as f:
     json.dump(best_params, f)

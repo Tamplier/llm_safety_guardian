@@ -34,7 +34,7 @@ def remove_label_issues(
         issues_mask = find_label_issues(
             labels=y_array,
             pred_probs=pred_probs,
-            filter_by='both',
+            filter_by='prune_by_class',
             frac_noise=frac_noise,
             confident_joint=confident_joint
         )
@@ -46,13 +46,18 @@ def remove_label_issues(
         X = X[~issues_mask]
         y = y[~issues_mask]
     logger.info('Label issues: %d', total_removed)
-    weights = _get_weights(classifier, X, y)
+    # weights = _get_weights(classifier, X, y)
+    weights = np.ones(len(y))
     return X, y, weights
 
 
 def _get_weights(classifier, X, y, alpha=1, w_min=0.1):
     pred_probs = cross_val_predict(classifier, X, y)
-    scores = get_label_quality_scores(labels=y.astype(int), pred_probs=pred_probs)
+    scores = get_label_quality_scores(
+        labels=y.astype(int),
+        pred_probs=pred_probs,
+        method='self_confidence'
+    )
     mean_score_per_class = np.zeros_like(scores)
     for c in np.unique(y):
         mean_score_per_class[y == c] = scores[y == c].mean()

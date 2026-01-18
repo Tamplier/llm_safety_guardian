@@ -1,4 +1,5 @@
 import skorch
+import torch
 from skorch import NeuralNetBinaryClassifier
 
 class WeightedNeuralNetBinaryClassifier(NeuralNetBinaryClassifier):
@@ -13,3 +14,10 @@ class WeightedNeuralNetBinaryClassifier(NeuralNetBinaryClassifier):
         sample_weight = skorch.utils.to_tensor(X['sample_weight'], device=self.device)
         loss_reduced = (sample_weight * loss_unreduced).mean()
         return loss_reduced
+
+    def decision_function(self, X):
+        self.module_.eval()
+        with torch.no_grad():
+            X_tensor = torch.tensor(X, dtype=torch.float32).to(self.device)
+            logits = self.module_(X_tensor)
+            return logits.detach().cpu().numpy().squeeze()
